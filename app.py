@@ -20,22 +20,20 @@ else:
 
 generic_url = st.text_input("URL", label_visibility="collapsed")
 def convert_youtube_url(url):
-    """Converts shortened YouTube URLs (youtu.be) to standard format."""
+    """Converts shortened YouTube URLs (youtu.be) to standard format and extracts video ID."""
+    # Match short URL format (youtu.be)
     match = re.match(r"https?://youtu\.be/([a-zA-Z0-9_-]+)", url)
     if match:
         video_id = match.group(1)
-        return f"https://www.youtube.com/watch?v={video_id}"
+        return video_id  # Return only the video ID
     
-    match = re.match(r"https?://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)", url)
+    # Match full YouTube URL format (youtube.com/watch?v=...)
+    match = re.match(r"https?://(?:www\.)?youtube\.com/watch\?v=([a-zA-Z0-9_-]+)", url)
     if match:
-        return url  # Already in correct format
+        return match.group(1)  # Return only the video ID
 
-    return url  # If it's neither, return as is
-
-## Convert URL if needed
-generic_url = convert_youtube_url(generic_url)
-
-
+    return None 
+video_id = convert_youtube_url(generic_url)
 
 ## Gemma Model USsing Groq API
 llm =ChatGroq(model="llama3-8b-8192", groq_api_key=GROQ_API_KEY)
@@ -73,17 +71,16 @@ if st.button("Summarize the Content from YT or Website"):
     else:
         try:
             with st.spinner("Waiting..."):
-                ## loading the website or yt video data
-                if "youtube.com" in generic_url or "youtu.be" in generic_url:
+                if video_id:
                     try:
-                        video_id = generic_url.split("v=")[-1].split("&")[0]
-                        try:
-                           transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-                        except:
-                           transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['te'])
+                        # Fetch transcript for the video ID
+                        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
                         transcript_text = " ".join([entry['text'] for entry in transcript])
+                        
+                        # Split the transcript text into smaller chunks
                         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
                         chunks = text_splitter.split_text(transcript_text)
+                        
                         docs = [Document(page_content=chunk, metadata={"source": generic_url}) for chunk in chunks]
                         st.write("✅ Transcript fetched and split successfully!")
                         

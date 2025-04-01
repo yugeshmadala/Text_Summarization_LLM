@@ -13,17 +13,16 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 st.set_page_config(page_title="LangChain: Summarize Text From YT or Website", page_icon="🦜")
 st.title("🦜 LangChain: Summarize Text From YT or Website")
 st.subheader('Summarize URL')
+if "GROQ_API_KEY" not in st.secrets:
+    st.error("Groq API Key is missing. Please add it to Streamlit Cloud Secrets.")
+else:
+    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
+generic_url = st.text_input("URL", label_visibility="collapsed")
 
-
-## Get the Groq API Key and url(YT or website)to be summarized
-with st.sidebar:
-    groq_api_key=st.text_input("Groq API Key",value="",type="password")
-
-generic_url=st.text_input("URL",label_visibility="collapsed")
 
 ## Gemma Model USsing Groq API
-llm =ChatGroq(model="llama3-8b-8192", groq_api_key=groq_api_key)
+llm =ChatGroq(model="llama3-8b-8192", groq_api_key=GROQ_API_KEY)
 
 #prompt_template="""
 #Provide a summary of the following content in 300 words:

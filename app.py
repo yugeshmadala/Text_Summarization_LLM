@@ -78,19 +78,16 @@ if st.button("Summarize the Content from YT or Website"):
             with st.spinner("Waiting..."):
                 if video_id:
                     try:
-                        # Fetch transcript for the video ID
-                        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-                        transcript_text = " ".join([entry['text'] for entry in transcript])
+                           transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
+                    except:
+                           transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['te'])
+                    transcript_text = " ".join([entry['text'] for entry in transcript])
+                    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+                    chunks = text_splitter.split_text(transcript_text)
+                    docs = [Document(page_content=chunk, metadata={"source": generic_url}) for chunk in chunks]
+                    st.write("✅ Transcript fetched and split successfully!")
                         
-                        # Split the transcript text into smaller chunks
-                        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-                        chunks = text_splitter.split_text(transcript_text)
-                        
-                        docs = [Document(page_content=chunk, metadata={"source": generic_url}) for chunk in chunks]
-                        st.write("✅ Transcript fetched and split successfully!")
-                        
-                    except Exception as e:
-                        st.error(f"Error fetching transcript: {e}")
+                    
                 else:
                     loader=UnstructuredURLLoader(urls=[generic_url],ssl_verify=False,
                                                  headers={"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"})

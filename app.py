@@ -21,6 +21,9 @@ else:
 generic_url = st.text_input("URL", label_visibility="collapsed")
 def convert_youtube_url(url):
     """Converts shortened YouTube URLs (youtu.be) to standard format and extracts video ID."""
+    if not url:
+        return None  # Return None if the URL is empty or None
+
     # Match short URL format (youtu.be)
     match = re.match(r"https?://youtu\.be/([a-zA-Z0-9_-]+)", url)
     if match:
@@ -32,7 +35,7 @@ def convert_youtube_url(url):
     if match:
         return match.group(1)  # Return only the video ID
 
-    return None 
+    return None  # If not a valid YouTube URL, return None
 video_id = convert_youtube_url(generic_url)
 
 ## Gemma Model USsing Groq API

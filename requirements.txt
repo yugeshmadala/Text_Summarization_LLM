@@ -17,5 +17,6 @@ yt_dlp
 langchain-yt-dlp
 transformers
 sentence-transformers 
+re
 
 

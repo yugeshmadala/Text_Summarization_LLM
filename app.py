@@ -19,6 +19,15 @@ else:
     GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
 generic_url = st.text_input("URL", label_visibility="collapsed")
+def convert_youtube_url(url):
+    """Converts shortened YouTube URLs (youtu.be) to standard format."""
+    match = re.search(r"youtu\.be/([a-zA-Z0-9_-]+)", url)
+    if match:
+        video_id = match.group(1)
+        return f"https://www.youtube.com/watch?v={video_id}"
+    return url
+
+generic_url = convert_youtube_url(generic_url)
 
 
 ## Gemma Model USsing Groq API

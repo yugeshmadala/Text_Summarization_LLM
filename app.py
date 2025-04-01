@@ -1,3 +1,4 @@
+import re
 import validators,streamlit as st
 from langchain.prompts import PromptTemplate
 from langchain_groq import ChatGroq
@@ -7,7 +8,7 @@ from langchain_yt_dlp.youtube_loader import YoutubeLoaderDL
 from youtube_transcript_api import YouTubeTranscriptApi
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-import re
+
 
 
 ## sstreamlit APP

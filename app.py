@@ -49,7 +49,7 @@ combine_prompt = PromptTemplate(
 
 if st.button("Summarize the Content from YT or Website"):
     ## Validate all the inputs
-    if not groq_api_key.strip() or not generic_url.strip():
+    if not GROQ_API_KEY.strip() or not generic_url.strip():
         st.error("Please provide the information to get started")
     elif not validators.url(generic_url):
         st.error("Please enter a valid Url. It can may be a YT video utl or website url")

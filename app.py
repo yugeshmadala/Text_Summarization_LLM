@@ -21,13 +21,20 @@ else:
 generic_url = st.text_input("URL", label_visibility="collapsed")
 def convert_youtube_url(url):
     """Converts shortened YouTube URLs (youtu.be) to standard format."""
-    match = re.search(r"youtu\.be/([a-zA-Z0-9_-]+)", url)
+    match = re.match(r"https?://youtu\.be/([a-zA-Z0-9_-]+)", url)
     if match:
         video_id = match.group(1)
         return f"https://www.youtube.com/watch?v={video_id}"
-    return url
+    
+    match = re.match(r"https?://www\.youtube\.com/watch\?v=([a-zA-Z0-9_-]+)", url)
+    if match:
+        return url  # Already in correct format
 
+    return url  # If it's neither, return as is
+
+## Convert URL if needed
 generic_url = convert_youtube_url(generic_url)
+
 
 
 ## Gemma Model USsing Groq API
